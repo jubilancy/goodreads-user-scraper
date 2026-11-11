@@ -1,3 +1,4 @@
+import asyncio
 import json
 import sys
 from argparse import Namespace
@@ -183,3 +184,18 @@ def test_cli_finishes_then_fails_when_book_fetches_are_exhausted(
     assert "incomplete" in str(exc.value.code)
     assert (tmp_path / "user.json").exists()
     assert "Saved to" in capsys.readouterr().out  # the run reached the end
+
+
+def test_fetch_shelf_page_forces_table_view(monkeypatch):
+    # Goodreads honours the account's saved shelf view (e.g. covers) unless the URL pins one; the parser needs the table layout.
+    from scraper import shelves
+
+    seen = []
+
+    async def fake(url):
+        seen.append(url)
+
+    monkeypatch.setattr("scraper.http.get_soup", fake)
+    asyncio.run(shelves.fetch_shelf_page("123", "read", 1))
+
+    assert "view=table" in seen[0]
