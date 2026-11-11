@@ -53,7 +53,7 @@ def make_progress() -> Progress:
 async def fetch_shelf_page(user_id: str, shelf: str, page: int) -> BeautifulSoup:
     url = (
         f"https://www.goodreads.com/review/list/{user_id}"
-        f"?shelf={shelf}&page={page}&per_page={PER_PAGE}&print=true"
+        f"?shelf={shelf}&page={page}&per_page={PER_PAGE}&print=true&view=table"
     )
     return await http.get_soup(url)
 
